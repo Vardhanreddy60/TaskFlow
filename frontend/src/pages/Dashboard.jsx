@@ -12,7 +12,7 @@ import {
 } from '../assets/dummy'
 
 // API Base
-const API_BASE = "http://localhost:4000/api/tasks"
+const API_BASE = "http://://taskflow-gc5e.onrender.com"
 
 const Dashboard = () => {
   const { tasks, refreshTasks } = useOutletContext()
