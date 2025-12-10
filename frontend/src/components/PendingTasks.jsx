@@ -1,10 +1,20 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Filter, SortDesc, SortAsc, Award, Plus, ListChecks, Clock } from "lucide-react";
+import {
+  Filter,
+  SortDesc,
+  SortAsc,
+  Award,
+  Plus,
+  ListChecks,
+  Clock
+} from "lucide-react";
+
 import TaskItem from "../components/TaskItem";
 import TaskModal from "../components/AddTask";
 import { layoutClasses } from "../assets/dummy";
 
+// Correct API base
 const API_BASE = "https://taskflow-gc5e.onrender.com/api/tasks";
 
 const sortOptions = [
@@ -14,6 +24,7 @@ const sortOptions = [
 ];
 
 const PendingTasks = () => {
+
   const { tasks = [], refreshTasks } = useOutletContext();
   const [sortBy, setSortBy] = useState("newest");
   const [selectedTask, setSelectedTask] = useState(null);
@@ -27,34 +38,31 @@ const PendingTasks = () => {
     };
   };
 
-  // ✅ CORRECT DELETE CALL
-  const handleDelete = useCallback(
-    async (id) => {
-      await fetch(`${API_BASE}/${id}/gp`, {
-        method: "DELETE",
-        headers: getHeaders(),
-      });
-      refreshTasks();
-    },
-    [refreshTasks]
-  );
+  // DELETE
+  const handleDelete = useCallback(async (id) => {
+    await fetch(`${API_BASE}/${id}/gp`, {
+      method: "DELETE",
+      headers: getHeaders()
+    });
+    refreshTasks();
+  }, [refreshTasks]);
 
-  // ✅ CORRECT TOGGLE COMPLETE CALL
-  const handleToggleComplete = useCallback(
-    async (id, completed) => {
-      await fetch(`${API_BASE}/${id}/gp`, {
-        method: "PUT",
-        headers: getHeaders(),
-        body: JSON.stringify({
-          completed: completed ? "Yes" : "No",
-        }),
-      });
-      refreshTasks();
-    },
-    [refreshTasks]
-  );
+  // TOGGLE COMPLETE
+  const handleToggleComplete = useCallback(async (id, completed) => {
+    await fetch(`${API_BASE}/${id}/gp`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        completed: completed ? "Yes" : "No"
+      })
+    });
+    refreshTasks();
+  }, [refreshTasks]);
 
+  // SORT + FILTER PENDING TASKS
   const sortedPendingTasks = useMemo(() => {
+
+    // pending filter
     const filtered = tasks.filter(
       (t) =>
         !t.completed ||
@@ -62,31 +70,36 @@ const PendingTasks = () => {
           t.completed.toLowerCase() === "no")
     );
 
+    // sorting
     return filtered.sort((a, b) => {
-      if (sortBy === "newest")
+      if (sortBy === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
-      if (sortBy === "oldest")
+      }
+      if (sortBy === "oldest") {
         return new Date(a.createdAt) - new Date(b.createdAt);
+      }
 
-      // priority
       const order = { high: 3, medium: 2, low: 1 };
       return order[b.priority.toLowerCase()] - order[a.priority.toLowerCase()];
     });
+
   }, [tasks, sortBy]);
 
   return (
     <div className={layoutClasses.container}>
+
+      {/* HEADER */}
       <div className={layoutClasses.headerWrapper}>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
             <ListChecks className="text-purple-500" /> Pending Tasks
           </h1>
           <p className="text-sm text-gray-500 mt-1 ml-7">
-            {sortedPendingTasks.length} task
-            {sortedPendingTasks.length !== 1 && "s"} needing your attention
+            {sortedPendingTasks.length} task{sortedPendingTasks.length !== 1 && "s"} needing your attention
           </p>
         </div>
 
+        {/* SORTING CONTROLS */}
         <div className={layoutClasses.sortBox}>
           <div className="flex items-center gap-2 text-gray-700 font-medium">
             <Filter className="w-4 h-4 text-purple-500" />
@@ -118,6 +131,7 @@ const PendingTasks = () => {
         </div>
       </div>
 
+      {/* ADD TASK */}
       <div className={layoutClasses.addBox} onClick={() => setShowModal(true)}>
         <div className="flex items-center justify-center gap-3 text-gray-500 group-hover:text-purple-600 transition-colors">
           <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200">
@@ -127,6 +141,7 @@ const PendingTasks = () => {
         </div>
       </div>
 
+      {/* TASK LIST */}
       <div className="space-y-4">
         {sortedPendingTasks.length === 0 ? (
           <div className={layoutClasses.emptyState}>
@@ -134,16 +149,10 @@ const PendingTasks = () => {
               <div className={layoutClasses.emptyIconBg}>
                 <Clock className="w-8 h-8 text-purple-500" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                All caught up!
-              </h3>
-              <p className="text-sm text-gray-500 mb-4">
-                No pending tasks - great work!
-              </p>
-              <button
-                onClick={() => setShowModal(true)}
-                className={layoutClasses.emptyBtn}
-              >
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">All caught up!</h3>
+              <p className="text-sm text-gray-500 mb-4">No pending tasks - great work!</p>
+
+              <button onClick={() => setShowModal(true)} className={layoutClasses.emptyBtn}>
                 Create New Task
               </button>
             </div>
@@ -156,10 +165,7 @@ const PendingTasks = () => {
               showCompleteCheckbox
               onDelete={() => handleDelete(task._id || task.id)}
               onToggleComplete={() =>
-                handleToggleComplete(
-                  task._id || task.id,
-                  !task.completed
-                )
+                handleToggleComplete(task._id || task.id, !task.completed)
               }
               onEdit={() => {
                 setSelectedTask(task);
@@ -171,6 +177,7 @@ const PendingTasks = () => {
         )}
       </div>
 
+      {/* MODAL */}
       <TaskModal
         isOpen={!!selectedTask || showModal}
         onClose={() => {
@@ -185,3 +192,4 @@ const PendingTasks = () => {
 };
 
 export default PendingTasks;
+
