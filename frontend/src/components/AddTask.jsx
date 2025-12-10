@@ -3,7 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PlusCircle, X, Save, Calendar, AlignLeft, Flag, CheckCircle } from 'lucide-react';
 import { baseControlClasses, priorityStyles, DEFAULT_TASK } from '../assets/dummy';
 
-const API_BASE = "https://taskflow-gc5e.onrender.com/api/tasks";
+const API_BASE = "https://taskflow-gc5e.onrender.com";
+
 
 
 const TaskModal = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {

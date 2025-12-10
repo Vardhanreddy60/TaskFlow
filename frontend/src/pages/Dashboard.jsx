@@ -12,7 +12,8 @@ import {
 } from '../assets/dummy';
 
 // ✅ Correct API Route
-const API_BASE = "https://taskflow-gc5e.onrender.com/api/tasks";
+const API_BASE = "https://taskflow-gc5e.onrender.com";
+
 
 const Dashboard = () => {
   const { tasks, refreshTasks } = useOutletContext();
@@ -64,13 +65,12 @@ const Dashboard = () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       };
 
-      if (taskData.id) {
-        // UPDATE TASK
-        await axios.put(`${API_BASE}/${taskData.id}`, taskData, { headers });
-      } else {
-        // CREATE TASK
-        await axios.post(API_BASE, taskData, { headers });
-      }
+    if (taskData.id) {
+  await axios.put(`${API_BASE}/${taskData.id}/gp`, taskData, { headers });
+} else {
+  await axios.post(`${API_BASE}/gp`, taskData, { headers });
+}
+
 
       refreshTasks();
       setShowModal(false);
