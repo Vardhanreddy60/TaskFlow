@@ -5,7 +5,8 @@ import TaskModal from "./AddTask"
 import { getPriorityColor, getPriorityBadgeColor, TI_CLASSES, MENU_OPTIONS, } from "../assets/dummy"
 import { CheckCircle2, MoreVertical, Clock, Calendar } from "lucide-react"
 
-const API_BASE = "https:////taskflow-gc5e.onrender.com"
+const API_BASE = "https://taskflow-gc5e.onrender.com/api/tasks"
+
 
 const TaskItem = ({ task, onRefresh, onLogout, showCompleteCheckbox = true }) => {
   const [showMenu, setShowMenu] = useState(false)
@@ -38,8 +39,11 @@ const TaskItem = ({ task, onRefresh, onLogout, showCompleteCheckbox = true }) =>
   const handleComplete = async () => {
     const newStatus = isCompleted ? "No" : "Yes"
     try {
-      await axios.put(`${API_BASE}/${task._id}/gp`, { completed: newStatus }, { headers: getAuthHeaders() })
-      setIsCompleted(!isCompleted)
+     await axios.put(`${API_BASE}/${task._id}/gp`, 
+  { completed: newStatus }, 
+  { headers: getAuthHeaders() }
+)
+
       onRefresh?.()
     } catch (err) {
       console.error(err)
@@ -55,7 +59,10 @@ const TaskItem = ({ task, onRefresh, onLogout, showCompleteCheckbox = true }) =>
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${API_BASE}/${task._id}/gp`, { headers: getAuthHeaders() })
+      await axios.delete(`${API_BASE}/${task._id}`, {
+  headers: getAuthHeaders()
+})
+
       onRefresh?.()
     } catch (err) {
       console.error(err)
@@ -67,7 +74,10 @@ const TaskItem = ({ task, onRefresh, onLogout, showCompleteCheckbox = true }) =>
     try {
       const payload = (({ title, description, priority, dueDate, completed }) =>
         ({ title, description, priority, dueDate, completed }))(updatedTask)
-      await axios.put(`${API_BASE}/${task._id}/gp`, payload, { headers: getAuthHeaders() })
+      await axios.put(`${API_BASE}/${task._id}/gp`, payload, {
+  headers: getAuthHeaders()
+});
+
       setShowEditModal(false)
       onRefresh?.()
     } catch (err) {

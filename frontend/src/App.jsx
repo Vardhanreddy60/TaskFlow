@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
@@ -82,6 +82,121 @@ const App = () => {
       </Route>
 
       <Route path="*" element={<Navigate to={currentUser ? '/' : '/login'} replace />} />
+    </Routes>
+  );
+};
+
+export default App;*/
+
+import { useState, useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate, Outlet } from "react-router-dom";
+
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import Pending from "./pages/Pending";
+import Complete from "./pages/Complete";
+import Profile from "./components/Profile";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import "./index.css";
+
+const App = () => {
+  const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    const user = localStorage.getItem("currentUser");
+    return user ? JSON.parse(user) : null;
+  });
+
+  // Persist user
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("currentUser");
+    }
+  }, [currentUser]);
+
+  // After Login or Signup
+  const handleAuthSubmit = (data) => {
+    const user = {
+      id: data.userId || data.id,
+      name: data.name,
+      email: data.email,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        data.name || "User"
+      )}&background=random`,
+    };
+
+    setCurrentUser(user);
+    navigate("/", { replace: true });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    setCurrentUser(null);
+    navigate("/login", { replace: true });
+  };
+
+  // Protected Layout Wrapper
+  const ProtectedWrapper = () => {
+    return currentUser ? (
+      <Layout user={currentUser} onLogout={handleLogout} />
+    ) : (
+      <Navigate to="/login" replace />
+    );
+  };
+
+  return (
+    <Routes>
+      {/* LOGIN */}
+      <Route
+        path="/login"
+        element={
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <Login
+              onSubmit={handleAuthSubmit}
+              onSwitchMode={() => navigate("/signup")}
+            />
+          </div>
+        }
+      />
+
+      {/* SIGN UP */}
+      <Route
+        path="/signup"
+        element={
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <SignUp
+              onSubmit={handleAuthSubmit}
+              onSwitchMode={() => navigate("/login")}
+            />
+          </div>
+        }
+      />
+
+      {/* PRIVATE ROUTES */}
+      <Route element={<ProtectedWrapper />}>
+        <Route index element={<Dashboard />} />
+        <Route path="pending" element={<Pending />} />
+        <Route path="complete" element={<Complete />} />
+        <Route
+          path="profile"
+          element={
+            <Profile
+              setCurrentUser={setCurrentUser}
+              onLogout={handleLogout}
+            />
+          }
+        />
+      </Route>
+
+      {/* CATCH ALL */}
+      <Route
+        path="*"
+        element={<Navigate to={currentUser ? "/" : "/login"} replace />}
+      />
     </Routes>
   );
 };

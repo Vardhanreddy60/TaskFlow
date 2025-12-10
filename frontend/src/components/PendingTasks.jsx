@@ -5,7 +5,8 @@ import TaskItem from '../components/TaskItem';
 import TaskModal from '../components/AddTask';
 import { layoutClasses } from '../assets/dummy';
 
-const API_BASE = 'https://taskflow-gc5e.onrender.com';
+const API_BASE = "https://taskflow-gc5e.onrender.com/api/tasks"
+
 const sortOptions = [
   { id: 'newest', label: 'Newest', icon: <SortDesc className="w-3 h-3" /> },
   { id: 'oldest', label: 'Oldest', icon: <SortAsc className="w-3 h-3" /> },
@@ -25,16 +26,21 @@ const PendingTasks = () => {
   };
 
   const handleDelete = useCallback(async (id) => {
-    await fetch(`${API_BASE}/${id}/gp`, { method: 'DELETE', headers: getHeaders() });
+   await fetch(`${API_BASE}/${id}`, {
+  method: "DELETE",
+  headers: getHeaders()
+});
+
     refreshTasks();
   }, [refreshTasks]);
 
   const handleToggleComplete = useCallback(async (id, completed) => {
-    await fetch(`${API_BASE}/${id}/gp`, {
-      method: 'PUT',
-      headers: getHeaders(),
-      body: JSON.stringify({ completed: completed ? 'Yes' : 'No' }),
-    });
+  await fetch(`${API_BASE}/${id}/gp`, {
+  method: "PUT",
+  headers: getHeaders(),
+  body: JSON.stringify({ completed: completed ? "Yes" : "No" })
+});
+
     refreshTasks();
   }, [refreshTasks]);
 
@@ -105,10 +111,11 @@ const PendingTasks = () => {
               task={task}
               showCompleteCheckbox
               onDelete={() => handleDelete(task._id || task.id)}
-              onToggleComplete={() => handleToggleComplete(
-                task._id || task.id,
-                !t.completed
-              )}
+             onToggleComplete={() => handleToggleComplete(
+  task._id || task.id,
+  !task.completed
+)}
+
               onEdit={() => { setSelectedTask(task); setShowModal(true); }}
               onRefresh={refreshTasks}
             />
