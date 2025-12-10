@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"
 import { INPUT_WRAPPER, FULL_BUTTON, SECTION_WRAPPER, BACK_BUTTON, DANGER_BTN, personalFields, securityFields } from '../assets/dummy'
 
 // Constants & Dummy Data
-const API_URL = "http://taskflow-gc5e.onrender.com"
+const API_URL = "https://taskflow-gc5e.onrender.com"
 
 export default function Profile({ setCurrentUser, onLogout }) {
   const [profile, setProfile] = useState({ name: "", email: "" })
