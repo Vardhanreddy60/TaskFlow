@@ -5,8 +5,10 @@ import { UserPlus } from "lucide-react"
 import { Inputwrapper, FIELDS, BUTTONCLASSES, MESSAGE_SUCCESS, MESSAGE_ERROR } from '../assets/dummy'
 
 // Dummy & Constants
-const API_URL = "https://://taskflow-gc5e.onrender.com"
+// Dummy & Constants
+const API_URL = "https://taskflow-gc5e.onrender.com"
 const INITIAL_FORM = { name: "", email: "", password: "" }
+
 
 const SignUp = ({ onSwitchMode }) => {
   const [formData, setFormData] = useState(INITIAL_FORM)
