@@ -11,30 +11,38 @@ const Layout = ({ user, onLogout }) => {
   const [error, setError] = useState(null)
 
   const fetchTasks = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+  setLoading(true);
+  setError(null);
 
-    try {
-      const token = localStorage.getItem("token")
-      if (!token) throw new Error("No auth token found")
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No auth token found");
 
-      const { data } = await axios.get("https://taskflow-gc5e.onrender.com", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+    // Corrected API call
+    const { data } = await axios.get(
+      "https://taskflow-gc5e.onrender.com/api/tasks",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      const arr = Array.isArray(data) ? data : 
-        Array.isArray(data?.tasks) ? data.tasks :
-        Array.isArray(data?.data) ? data.data : []
+    // Handle different backend formats
+    const arr = Array.isArray(data.tasks)
+      ? data.tasks
+      : Array.isArray(data)
+      ? data
+      : [];
 
-      setTasks(arr)
-    } catch (err) {
-      console.error(err)
-      setError(err.message || "Could not load tasks.")
-      if (err.response?.status === 401) onLogout()
-    } finally {
-      setLoading(false)
-    }
-  }, [onLogout])
+    setTasks(arr);
+  } catch (err) {
+    console.error(err);
+    setError(err.message || "Could not load tasks.");
+    if (err.response?.status === 401) onLogout();
+  } finally {
+    setLoading(false);
+  }
+}, [onLogout]);
+
 
   useEffect(() => { fetchTasks() }, [fetchTasks])
 
