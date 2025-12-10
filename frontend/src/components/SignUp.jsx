@@ -4,13 +4,10 @@ import { UserPlus } from "lucide-react"
 
 import { Inputwrapper, FIELDS, BUTTONCLASSES, MESSAGE_SUCCESS, MESSAGE_ERROR } from '../assets/dummy'
 
-// Dummy & Constants
-// Dummy & Constants
 const API_URL = "https://taskflow-gc5e.onrender.com"
 const INITIAL_FORM = { name: "", email: "", password: "" }
 
-
-const SignUp = ({ onSwitchMode }) => {
+const SignUp = ({ onSwitchMode, onSubmit }) => {
   const [formData, setFormData] = useState(INITIAL_FORM)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ text: "", type: "" })
@@ -23,14 +20,28 @@ const SignUp = ({ onSwitchMode }) => {
     e.preventDefault()
     setLoading(true)
     setMessage({ text: "", type: "" })
+
     try {
       const { data } = await axios.post(`${API_URL}/api/user/register`, formData)
       console.log("SignUp successful:", data)
-      setMessage({ text: "Registration successful! You can now log in.", type: "success" })
+
+      setMessage({ text: "Registration successful! Redirecting...", type: "success" })
+
+      // 🔥 Trigger App.jsx update
+      if (data?.user) {
+        onSubmit?.({
+          email: data.user.email,
+          name: data.user.name
+        })
+      }
+
       setFormData(INITIAL_FORM)
     } catch (err) {
       console.error("SignUp error:", err)
-      setMessage({ text: err.response?.data?.message || "An error occurred. Please try again.", type: "error" })
+      setMessage({
+        text: err.response?.data?.message || "An error occurred. Please try again.",
+        type: "error"
+      })
     } finally {
       setLoading(false)
     }
@@ -73,7 +84,7 @@ const SignUp = ({ onSwitchMode }) => {
       </form>
 
       <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{' '}
+        Already have an account?{" "}
         <button
           onClick={onSwitchMode}
           className="text-purple-600 hover:text-purple-700 hover:underline font-medium transition-colors"
