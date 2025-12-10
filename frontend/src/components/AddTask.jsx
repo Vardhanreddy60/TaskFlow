@@ -1,5 +1,5 @@
 // components/TaskModal.jsx
-/*import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlusCircle, X, Save, Calendar, AlignLeft, Flag, CheckCircle } from 'lucide-react';
 import { baseControlClasses, priorityStyles, DEFAULT_TASK } from '../assets/dummy';
 
@@ -155,7 +155,8 @@ const TaskModal = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
   );
 };
 
-export default TaskModal;*/
+export default TaskModal;
+/*
 
 import { useState, useEffect } from "react"
 import axios from "axios"
@@ -410,3 +411,4 @@ const TaskItem = ({ task, onRefresh, onLogout, showCompleteCheckbox = true }) =>
 
 export default TaskItem
 
+*/
